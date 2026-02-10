@@ -44,3 +44,20 @@ Input selection:
 - `--recursive`: Scan input directory recursively.
 - `--dry-run`: Resolve paths and list inputs without processing.
 - `--max-images` (int): Limit number of images processed (0 = all).
+
+## Analyze ROI Ring Coverage
+
+Run ring analysis on ROI images and verify coverage against all raw inputs:
+
+```bash
+python data/scripts/analyze_roi_ring_metrics.py \
+  --csv-path data/processed/ring_metrics.csv \
+  --debug-dir data/processed/ring_debug
+```
+
+This computes:
+
+- `colored_ratio = colored_pixels_in_ring / ring_pixels`
+- `angular_coverage = lit_angle_bins / 360`
+
+It also checks whether each file in `data/raw` has a corresponding `_roi` image.
