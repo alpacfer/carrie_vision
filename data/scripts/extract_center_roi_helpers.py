@@ -12,7 +12,7 @@ SRC_DIR = PROJECT_ROOT_FROM_SCRIPT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from carrievision.image_helpers import (
+from buttonvision.image_helpers import (
     crop_images_to_roi,
     find_project_root,
     list_image_paths,

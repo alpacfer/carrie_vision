@@ -3,7 +3,7 @@
 ## Project Overview
 - Single-purpose image pipeline for extracting a centered square ROI.
 - Primary entry point: [data/scripts/extract_center_roi.py](data/scripts/extract_center_roi.py).
-- Core helpers live in [src/carrievision/image_helpers.py](src/carrievision/image_helpers.py).
+- Core helpers live in [src/buttonvision/image_helpers.py](src/buttonvision/image_helpers.py).
 - Inputs default to [data/raw](data/raw); outputs go to [data/processed/roi](data/processed/roi).
 
 ## How Data Flows
