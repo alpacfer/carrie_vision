@@ -48,6 +48,12 @@ python data/scripts/extract_center_roi.py --side 1000
 python data/scripts/extract_center_roi.py --side 1000 --max-images 3
 ```
 
+- Process a single image by name (no extension):
+
+```bash
+python data/scripts/extract_center_roi.py --side 1000 --image-name PXL_20260209_120141787
+```
+
 - Use a different input folder:
 
 ```bash
@@ -64,6 +70,7 @@ python data/scripts/extract_center_roi.py --output-dir data/processed/roi_alt --
 
 - `--side` (int): Size of the square crop in pixels. Example: `--side 1000`.
 - `--max-images` (int): Limit how many images to process. Use `0` for all images.
+- `--image-name` (str): Process a single image by file stem (no extension).
 - `--project-root` (path): Manually set the project root (rarely needed).
 - `--input-dir` (path): Override the raw image folder (default is `data/raw`).
 - `--output-dir` (path): Override the output folder (default is `data/processed/roi`).
@@ -99,6 +106,14 @@ python data/scripts/analyze_roi_ring_metrics.py \
 python data/scripts/analyze_roi_ring_metrics.py --csv-path data/processed/ring_metrics.csv
 ```
 
+- Analyze a single image by name (no extension):
+
+```bash
+python data/scripts/analyze_roi_ring_metrics.py \
+  --image-name PXL_20260209_120141787 \
+  --csv-path data/processed/ring_metrics.csv
+```
+
 ### Parameters (Ring Analysis)
 
 - `--roi-dir` (path): Folder with ROI images (default is `data/processed/roi`).
@@ -107,6 +122,7 @@ python data/scripts/analyze_roi_ring_metrics.py --csv-path data/processed/ring_m
 - `--debug-dir` (path): Optional folder for debug images.
 - `--min-coverage` (float): Minimum angular coverage to pass. Default is `0.95`.
 - `--min-colored-ratio` (float): Minimum colored ratio to pass. Default is `0.85`.
+- `--image-name` (str): Process a single image by file stem (no extension).
 - `--project-root` (path): Manually set the project root (rarely needed).
 
 ### Output (Ring Analysis)

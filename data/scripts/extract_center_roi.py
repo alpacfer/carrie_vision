@@ -31,7 +31,7 @@ def main() -> None:
     validate_side(args.side)
 
     # Step 3: Collect input images (optionally limiting count).
-    image_paths = collect_image_paths(input_dir, args.max_images)
+    image_paths = collect_image_paths(input_dir, args.max_images, args.image_name)
 
     # Step 4: Load images and crop to the centered square ROI.
     cropped_images = load_and_crop_images(image_paths, args.side)

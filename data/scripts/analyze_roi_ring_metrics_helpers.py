@@ -56,6 +56,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=0.85,
         help="Pass threshold for colored_ratio.",
     )
+    parser.add_argument(
+        "--image-name",
+        type=str,
+        default=None,
+        help="Process a single image by file stem (no extension).",
+    )
     return parser
 
 
@@ -75,7 +81,23 @@ def resolve_paths(
     return resolved_project_root, resolved_roi_dir, resolved_raw_dir
 
 
-def load_image_paths(roi_dir: Path, raw_dir: Path) -> tuple[list[Path], list[Path]]:
+def _filter_paths_by_name(
+    image_paths: list[Path],
+    image_name: str,
+    expected_suffix: str,
+    source_dir: Path,
+) -> list[Path]:
+    matches = [p for p in image_paths if p.stem == f"{image_name}{expected_suffix}"]
+    if not matches:
+        raise RuntimeError(f"No image named '{image_name}' found in: {source_dir}")
+    return matches
+
+
+def load_image_paths(
+    roi_dir: Path,
+    raw_dir: Path,
+    image_name: Optional[str],
+) -> tuple[list[Path], list[Path]]:
     roi_paths = list_image_paths(roi_dir)
     raw_paths = list_image_paths(raw_dir)
 
@@ -83,6 +105,10 @@ def load_image_paths(roi_dir: Path, raw_dir: Path) -> tuple[list[Path], list[Pat
         raise RuntimeError(f"No ROI images found in: {roi_dir}")
     if not raw_paths:
         raise RuntimeError(f"No raw images found in: {raw_dir}")
+
+    if image_name:
+        raw_paths = _filter_paths_by_name(raw_paths, image_name, "", raw_dir)
+        roi_paths = _filter_paths_by_name(roi_paths, image_name, "_roi", roi_dir)
 
     return roi_paths, raw_paths
 

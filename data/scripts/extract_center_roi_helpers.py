@@ -46,6 +46,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--max-images", type=int, default=0, help="Limit number of images processed (0 = all)."
     )
+    parser.add_argument(
+        "--image-name",
+        type=str,
+        default=None,
+        help="Process a single image by file stem (no extension).",
+    )
 
     return parser
 
@@ -72,10 +78,24 @@ def validate_side(side: int) -> None:
         raise ValueError("--side must be > 0")
 
 
-def collect_image_paths(input_dir: Path, max_images: int) -> list[Path]:
+def _filter_image_paths_by_name(
+    image_paths: list[Path],
+    image_name: str,
+    input_dir: Path,
+) -> list[Path]:
+    matches = [p for p in image_paths if p.stem == image_name]
+    if not matches:
+        raise RuntimeError(f"No image named '{image_name}' found in: {input_dir}")
+    return matches
+
+
+def collect_image_paths(input_dir: Path, max_images: int, image_name: Optional[str]) -> list[Path]:
     image_paths = list_image_paths(input_dir)
     if not image_paths:
         raise RuntimeError(f"No images found in: {input_dir}")
+
+    if image_name:
+        return _filter_image_paths_by_name(image_paths, image_name, input_dir)
 
     if max_images and max_images > 0:
         image_paths = image_paths[:max_images]

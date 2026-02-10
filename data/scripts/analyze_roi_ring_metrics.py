@@ -27,7 +27,7 @@ def main() -> None:
     )
 
     # Step 2: Load ROI and raw image paths.
-    roi_paths, raw_paths = load_image_paths(roi_dir, raw_dir)
+    roi_paths, raw_paths = load_image_paths(roi_dir, raw_dir, args.image_name)
 
     # Step 3: Check for missing ROI outputs.
     missing_roi = find_missing_roi_names(roi_paths, raw_paths)
