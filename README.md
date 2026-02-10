@@ -1,4 +1,4 @@
-# carrie_vision
+# button_vision
 
 This project crops a centered square ROI from images and then analyzes LED ring coverage on those ROI images.
 
