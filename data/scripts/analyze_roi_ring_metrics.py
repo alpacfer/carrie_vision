@@ -32,7 +32,6 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=None,
         help="Raw image directory used to verify every raw image has a corresponding ROI.",
     )
-    parser.add_argument("--recursive", action="store_true", help="Scan image directories recursively.")
     parser.add_argument(
         "--debug-dir",
         type=Path,
@@ -336,8 +335,8 @@ def main() -> None:
     roi_dir = args.roi_dir or (project_root / "data" / "processed" / "roi")
     raw_dir = args.raw_dir or (project_root / "data" / "raw")
 
-    roi_paths = list_image_paths(roi_dir, recursive=args.recursive)
-    raw_paths = list_image_paths(raw_dir, recursive=args.recursive)
+    roi_paths = list_image_paths(roi_dir)
+    raw_paths = list_image_paths(raw_dir)
 
     if not roi_paths:
         raise RuntimeError(f"No ROI images found in: {roi_dir}")

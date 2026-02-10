@@ -30,10 +30,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--input-dir", type=Path, default=None)
     parser.add_argument("--output-dir", type=Path, default=None)
 
-    parser.add_argument("--side", type=int, required=True, help="Side length in pixels for the centered square.")
-    parser.add_argument("--recursive", action="store_true", help="Scan input directory recursively.")
+    parser.add_argument(
+        "--side",
+        type=int,
+        default=1000,
+        help="Side length in pixels for the centered square (default: 1000).",
+    )
     parser.add_argument("--max-images", type=int, default=0, help="Limit number of images processed (0 = all).")
-    parser.add_argument("--dry-run", action="store_true", help="Resolve paths and list inputs without processing.")
 
     return parser
 
@@ -53,23 +56,12 @@ def main() -> None:
     if args.side <= 0:
         raise ValueError("--side must be > 0")
 
-    image_paths = list_image_paths(input_dir, recursive=args.recursive)
+    image_paths = list_image_paths(input_dir)
     if not image_paths:
         raise RuntimeError(f"No images found in: {input_dir}")
 
     if args.max_images and args.max_images > 0:
         image_paths = image_paths[: args.max_images]
-
-    if args.dry_run:
-        print(f"Project root: {project_root}")
-        print(f"Input dir:    {input_dir}")
-        print(f"Output dir:   {output_dir}")
-        print(f"Images:       {len(image_paths)}")
-        print("\nInputs:")
-        for p in image_paths:
-            print(f"  {p.name}")
-        print("\nDry-run complete.")
-        return
 
     images = load_images(image_paths)
     cropped, used_roi = crop_images_to_roi(images=images, center_square_side=args.side)
