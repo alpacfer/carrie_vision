@@ -1,76 +1,46 @@
 from __future__ import annotations
 
-import argparse
-import sys
 from pathlib import Path
-from typing import Optional, Sequence
 
-# Make src importable when running this script directly
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT_FROM_SCRIPT = SCRIPT_DIR.parent.parent
-SRC_DIR = PROJECT_ROOT_FROM_SCRIPT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-from carrievision.image_helpers import (
-    crop_images_to_roi,
-    find_project_root,
-    list_image_paths,
-    load_images,
-    save_images,
+from extract_center_roi_helpers import (
+    collect_image_paths,
+    ensure_src_on_path,
+    load_and_crop_images,
+    parse_args,
+    print_summary,
+    resolve_paths,
+    save_cropped_images,
+    validate_side,
 )
 
 
-def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Crop each image to a centered square ROI and save the crops."
-    )
-
-    parser.add_argument("--project-root", type=Path, default=None)
-    parser.add_argument("--input-dir", type=Path, default=None)
-    parser.add_argument("--output-dir", type=Path, default=None)
-
-    parser.add_argument(
-        "--side",
-        type=int,
-        default=1000,
-        help="Side length in pixels for the centered square (default: 1000).",
-    )
-    parser.add_argument("--max-images", type=int, default=0, help="Limit number of images processed (0 = all).")
-
-    return parser
-
-
-def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    parser = build_arg_parser()
-    return parser.parse_args(argv)
+# Make src importable when running this script directly
+SCRIPT_DIR = Path(__file__).resolve().parent
+ensure_src_on_path(SCRIPT_DIR)
 
 
 def main() -> None:
     args = parse_args()
 
-    project_root = args.project_root or find_project_root(SCRIPT_DIR)
-    input_dir = args.input_dir or (project_root / "data" / "raw")
-    output_dir = args.output_dir or (project_root / "data" / "processed" / "roi")
+    # Step 1: Resolve paths for the project, input, and output.
+    project_root, input_dir, output_dir = resolve_paths(
+        SCRIPT_DIR, args.project_root, args.input_dir, args.output_dir
+    )
 
-    if args.side <= 0:
-        raise ValueError("--side must be > 0")
+    # Step 2: Validate CLI inputs.
+    validate_side(args.side)
 
-    image_paths = list_image_paths(input_dir)
-    if not image_paths:
-        raise RuntimeError(f"No images found in: {input_dir}")
+    # Step 3: Collect input images (optionally limiting count).
+    image_paths = collect_image_paths(input_dir, args.max_images)
 
-    if args.max_images and args.max_images > 0:
-        image_paths = image_paths[: args.max_images]
+    # Step 4: Load images and crop to the centered square ROI.
+    cropped_images = load_and_crop_images(image_paths, args.side)
 
-    images = load_images(image_paths)
-    cropped, used_roi = crop_images_to_roi(images=images, center_square_side=args.side)
-    save_images(cropped, image_paths, output_dir, suffix="_roi")
+    # Step 5: Save the cropped images.
+    save_cropped_images(cropped_images, image_paths, output_dir)
 
-    print(f"\nProject root: {project_root}")
-    print(f"Input dir:    {input_dir}")
-    print(f"Output dir:   {output_dir}")
-    print(f"Images:       {len(image_paths)}")
+    # Step 6: Print a summary of what was processed.
+    print_summary(project_root, input_dir, output_dir, len(image_paths))
 
 
 if __name__ == "__main__":
