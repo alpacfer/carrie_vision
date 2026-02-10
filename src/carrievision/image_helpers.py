@@ -67,8 +67,10 @@ def _center_square_roi(img_w: int, img_h: int, side: int) -> Roi:
         raise ValueError("center square side must be > 0")
 
     side = min(side, img_w, img_h)
-    x = (img_w - side) // 2
-    y = (img_h - side) // 2
+    cx = img_w / 2
+    cy = img_h / 2
+    x = int(round(cx - side / 2))
+    y = int(round(cy - side / 2))
     return (x, y, side, side)
 
 
@@ -79,7 +81,7 @@ def crop_images_to_roi(
 ) -> Tuple[List[np.ndarray], Roi]:
     """
     Crop all images using the same base ROI.
-    If roi is None, computes centered square from first image.
+    If roi is None, computes a centered square per image.
     """
     if not images:
         raise ValueError("images is empty")
@@ -90,7 +92,8 @@ def crop_images_to_roi(
     cropped: List[np.ndarray] = []
     for img in images:
         h, w = img.shape[:2]
-        x, y, rw, rh = _clip_roi_to_image(base_roi, w=w, h=h)
+        current_roi = base_roi if roi is not None else _center_square_roi(w, h, center_square_side)
+        x, y, rw, rh = _clip_roi_to_image(current_roi, w=w, h=h)
         cropped.append(img[y:y + rh, x:x + rw].copy())
 
     return cropped, base_roi

@@ -79,7 +79,6 @@ def main() -> None:
     print(f"Input dir:    {input_dir}")
     print(f"Output dir:   {output_dir}")
     print(f"Images:       {len(image_paths)}")
-    print(f"Used ROI:     {used_roi} (x, y, w, h)")
 
 
 if __name__ == "__main__":
