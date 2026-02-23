@@ -1,0 +1,2 @@
+image,status,color_label,colored_ratio,angular_coverage,ring_r_in_px,ring_r_out_px,sat_threshold,center_x,center_y,error
+capture_20260223_142929_roi.png,fail,green,0.093088,0.002778,211,240,173.000,552.75,543.95,

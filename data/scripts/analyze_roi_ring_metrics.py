@@ -26,6 +26,10 @@ def main() -> None:
         SCRIPT_DIR, args.project_root, args.roi_dir, args.raw_dir
     )
 
+    debug_dir = args.debug_dir
+    if debug_dir and not debug_dir.is_absolute():
+        debug_dir = project_root / debug_dir
+
     # Step 2: Load ROI and raw image paths.
     roi_paths, raw_paths = load_image_paths(roi_dir, raw_dir, args.image_name)
 
@@ -37,7 +41,7 @@ def main() -> None:
         roi_paths=roi_paths,
         min_coverage=args.min_coverage,
         min_colored_ratio=args.min_colored_ratio,
-        debug_dir=args.debug_dir,
+        debug_dir=debug_dir,
     )
 
     # Step 5: Print report summary and per-image metrics.

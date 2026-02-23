@@ -35,8 +35,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--debug-dir",
         type=Path,
-        default=None,
-        help="Optional output dir for debug overlays with annulus and lit-angle sectors.",
+        default=Path("data/processed/ring_debug"),
+        help="Output dir for debug overlays with annulus and lit-angle sectors.",
     )
     parser.add_argument(
         "--csv-path",
@@ -362,6 +362,23 @@ def render_debug_overlay(img_bgr: np.ndarray, metrics: Dict[str, object], out_pa
         raise RuntimeError(f"Failed to save debug overlay: {out_path}")
 
 
+def render_error_debug_overlay(img_bgr: np.ndarray, error_text: str, out_path: Path) -> None:
+    overlay = img_bgr.copy()
+    h, w = overlay.shape[:2]
+
+    lines = [f"analysis error: {error_text}"]
+    y = max(30, min(h - 12, 40))
+    for line in lines:
+        cv2.putText(overlay, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 0), 4, cv2.LINE_AA)
+        cv2.putText(overlay, line, (10, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 255), 1, cv2.LINE_AA)
+        y += 24
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    ok = cv2.imwrite(str(out_path), overlay)
+    if not ok:
+        raise RuntimeError(f"Failed to save debug overlay: {out_path}")
+
+
 def write_csv(csv_path: Path, rows: List[Dict[str, object]]) -> None:
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     fields = [
@@ -441,6 +458,15 @@ def analyze_roi_images(
                 )
 
         except Exception as exc:  # noqa: BLE001
+            if debug_dir:
+                try:
+                    render_error_debug_overlay(
+                        img_bgr=img,
+                        error_text=str(exc),
+                        out_path=debug_dir / f"{roi_path.stem}_debug.jpg",
+                    )
+                except Exception:
+                    pass
             rows.append(
                 {
                     "image": roi_path.name,

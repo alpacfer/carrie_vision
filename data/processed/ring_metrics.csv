@@ -1,2 +1,2 @@
 image,status,color_label,colored_ratio,angular_coverage,ring_r_in_px,ring_r_out_px,sat_threshold,center_x,center_y,error
-PXL_20260209_120141787_roi.jpg,pass,green,0.999085,1.000000,155,193,105.000,549.45,538.45,
+capture_20260223_140155_roi.png,error,,,,,,,,,No circle candidates found.

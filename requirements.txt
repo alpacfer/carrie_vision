@@ -1,2 +1,4 @@
 numpy
 opencv-python-headless
+ids_peak
+ids_peak_ipl

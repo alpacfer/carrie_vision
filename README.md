@@ -5,7 +5,26 @@ This project crops a centered square ROI from images and then analyzes LED ring 
 ## Quick Start (3 Steps)
 
 1. Install Python (3.10 or newer).
-2. Install dependencies:
+2. Create and install the project environment:
+
+```powershell
+./setup_project.ps1
+```
+
+To also activate the environment in the same PowerShell session:
+
+```powershell
+./setup_project.ps1 -Activate
+```
+
+If PowerShell blocks scripts, allow it for the current terminal only:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+./setup_project.ps1 -Activate
+```
+
+Manual install alternative:
 
 ```bash
 python -m pip install --upgrade pip
@@ -31,6 +50,50 @@ If you see a summary printed and a new file in `data/processed/roi`, the setup w
   - Reads ROI images from `data/processed/roi`.
   - Measures how much of the LED ring is lit.
   - Writes a CSV summary and optional debug overlays.
+
+## Capture One Image from IDS Camera
+
+Use this script to capture a single frame from the first detected IDS camera:
+
+```bash
+python data/scripts/capture_raw_camera_image.py
+```
+
+The image is saved to:
+
+```text
+raw_camera/
+```
+
+## Run Full Pipeline (Capture → ROI → Metrics)
+
+Run everything in one command from the project root:
+
+```bash
+python run_full_pipeline.py
+```
+
+By default, all outputs are organized under:
+
+```text
+full_pipeline/
+  raw/
+  roi/
+  ring_debug/
+  metrics/ring_metrics.csv
+```
+
+Optional ROI size override:
+
+```bash
+python run_full_pipeline.py --side 800
+```
+
+Optional output root override:
+
+```bash
+python run_full_pipeline.py --output-root my_pipeline_run
+```
 
 ## Run ROI Extraction (Step A)
 
